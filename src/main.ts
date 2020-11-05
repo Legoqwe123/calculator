@@ -11,7 +11,11 @@ document.addEventListener("DOMContentLoaded", (): void => {
         ".temporary-input",
     )
 
-    const calculator = new Calculator(container, input, temporaryInput)
+    const calculator = new Calculator(
+        container as HTMLDivElement,
+        input as HTMLDivElement,
+        temporaryInput as HTMLDivElement,
+    )
 
     calculator.init()
 })

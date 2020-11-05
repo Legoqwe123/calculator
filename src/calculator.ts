@@ -1,4 +1,4 @@
-/* eslint-disable security/detect-object-injection */
+/* eslint-disable @typescript-eslint/no-non-null-assertion, security/detect-object-injection */
 import { onlyArithmeticOperationType, Operation, OperationType } from "./types"
 import { translateOperation, transformToNumber } from "./utils"
 import { buttons } from "./constant"
@@ -22,42 +22,40 @@ export class Calculator {
     private temporary = ""
     private sum: undefined | number | null
     private operation: OperationType | null = null
-    private $operation: HTMLDivElement | undefined
+    private $operation: HTMLDivElement | null = null
 
     constructor(
-        private $container: HTMLDivElement | null,
-        private $input: HTMLDivElement | null,
-        private $tempoInput: HTMLDivElement | null,
+        private $container: HTMLDivElement,
+        private $input: HTMLDivElement,
+        private $tempoInput: HTMLDivElement,
     ) {
-        this.$container?.addEventListener("click", this.handleChange.bind(this))
+        this.$container.addEventListener("click", this.handleChange.bind(this))
     }
 
     init(): void {
-        if (this.$container && this.$input) {
-            const $div = document.createElement("div")
-            const $input = document.querySelector(".input")
+        const $div = document.createElement("div")
+        const $input = document.querySelector(".input")
 
-            $div.className = "operation"
+        $div.className = "operation"
 
-            $input?.append($div)
+        $input?.append($div)
 
-            this.$operation = $div
+        this.$operation = $div
 
-            this.$container.innerHTML = this.buttons
-                .map(
-                    (item, idx) =>
-                        `<div class = '${
-                            !item.operation
-                                ? "button button-num"
-                                : "button button-operation"
-                        }' data-id = '${idx}' ${
-                            item.operation
-                                ? `data-operation = "${item.operation}"`
-                                : null
-                        }>${item.content}</div>`,
-                )
-                .join("")
-        }
+        this.$container.innerHTML = this.buttons
+            .map(
+                (item, idx) =>
+                    `<div class = '${
+                        !item.operation
+                            ? "button button-num"
+                            : "button button-operation"
+                    }' data-id = '${idx}' ${
+                        item.operation
+                            ? `data-operation = "${item.operation}"`
+                            : null
+                    }>${item.content}</div>`,
+            )
+            .join("")
     }
 
     private handleChange(event: Event): void {
@@ -79,9 +77,10 @@ export class Calculator {
                             : (target.textContent as string)
                 }
 
-                if (this.$input) {
-                    this.$input.textContent = this.accum
-                }
+                this.$input.innerHTML = this.accum
+                    .split("")
+                    .map((item) => `<span>${item}</span>`)
+                    .join("")
             } else {
                 if (
                     isFinite(transformToNumber(this.accum) as number) ||
@@ -102,25 +101,21 @@ export class Calculator {
             this.temporary = this.accum
             this.operation = operation
 
-            if (this.$tempoInput && this.$operation) {
-                if (this.operation === Operation.SQRT) {
-                    this.calculateValue = this.operation
+            if (this.operation === Operation.SQRT) {
+                this.calculateValue = this.operation
 
-                    return
-                }
-
-                this.$operation.innerHTML = this.temporary
-                    ? (translateOperation(this.operation) as string)
-                    : ""
-                this.$tempoInput.textContent = this.temporary
-
-                this.clear = ""
+                return
             }
-        } else {
-            if (this.operation && this.temporary && this.accum) {
-                this.calculateValue = this
-                    .operation as onlyArithmeticOperationType
-            }
+
+            this.$operation!.innerHTML = this.temporary
+                ? (translateOperation(this.operation) as string)
+                : ""
+            this.$tempoInput.textContent = this.temporary
+
+            this.clear = ""
+        }
+        if (this.operation && this.temporary && this.accum) {
+            this.calculateValue = this.operation as onlyArithmeticOperationType
         }
     }
 
@@ -154,9 +149,7 @@ export class Calculator {
 
         this.accum = this.sum + ""
 
-        if (this.$input) {
-            this.$input.textContent = this.accum
-        }
+        this.$input.textContent = this.accum
     }
 
     private set clearAll(value: string) {
@@ -164,18 +157,15 @@ export class Calculator {
         this.operation = null
         this.temporary = value
 
-        if (this.$input && this.$tempoInput && this.$operation) {
-            this.$input.textContent = this.accum
-            this.$tempoInput.textContent = this.temporary
-            this.$operation.textContent = value
-        }
+        this.$input.textContent = this.accum
+        this.$tempoInput.textContent = this.temporary
+
+        this.$operation!.textContent = value
     }
 
     private set clear(value: string) {
         this.accum = value
 
-        if (this.$input) {
-            this.$input.textContent = this.accum
-        }
+        this.$input.textContent = this.accum
     }
 }
