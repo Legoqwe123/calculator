@@ -4,7 +4,6 @@ const hot = require('webpack-hot-middleware')
 
 const webpackConfig = require('./webpack.config')
 
-
 const compiler = webpack(webpackConfig)
 
 const server = new DevServer(compiler, {

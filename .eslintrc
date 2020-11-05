@@ -2,6 +2,7 @@
   "root": true,
   "env": {
     "node": true,
+    "browser": true,
     "es6": true
   },
   "globals": {},
@@ -31,29 +32,40 @@
   "parser": "@typescript-eslint/parser",
   "overrides": [
     {
-      "files": ["*.spec.ts"]
+      "files": [
+        "*.spec.ts"
+      ]
     }
   ],
   "rules": {
     // general
-    "max-lines": ["error", 500],
-    "no-console": "error",
+    "max-lines": [
+      "error",
+      500
+    ],
+    "no-console": "warn",
     "no-dupe-keys": "error",
     "object-shorthand": "error",
     "no-undef": "error",
-    "no-unused-vars": ["error", { "argsIgnorePattern": "^_+" }],
+    "no-unused-vars": [
+      "error",
+      {
+        "argsIgnorePattern": "^_+"
+      }
+    ],
     "no-use-before-define": "error",
     "no-warning-comments": [
       "error",
       {
-        "terms": ["no commit"],
+        "terms": [
+          "no commit"
+        ],
         "location": "anywhere"
       }
     ],
     "curly": "error",
     "no-unneeded-ternary": "error",
     "no-nested-ternary": "error",
-
     // async
     "no-restricted-syntax": [
       "error",
@@ -74,73 +86,70 @@
         "message": "Async method name must end in 'Async'"
       },
       {
-        "selector":
-          "Property[value.type=/FunctionExpression$/][value.async=false][key.name=/Async$/]",
+        "selector": "Property[value.type=/FunctionExpression$/][value.async=false][key.name=/Async$/]",
         "message": "Function ending in 'Async' must be declared async"
       },
       {
-        "selector":
-          "Property[value.type=/FunctionExpression$/][value.async=true][key.name!=/Async$/]",
+        "selector": "Property[value.type=/FunctionExpression$/][value.async=true][key.name!=/Async$/]",
         "message": "Async function name must end in 'Async'"
       },
       {
-        "selector":
-          "VariableDeclarator[init.type=/FunctionExpression$/][init.async=false][id.name=/Async$/]",
+        "selector": "VariableDeclarator[init.type=/FunctionExpression$/][init.async=false][id.name=/Async$/]",
         "message": "Function ending in 'Async' must be declared async"
       },
       {
-        "selector":
-          "VariableDeclarator[init.type=/FunctionExpression$/][init.async=true][id.name!=/Async$/]",
+        "selector": "VariableDeclarator[init.type=/FunctionExpression$/][init.async=true][id.name!=/Async$/]",
         "message": "Async function name must end in 'Async'"
       }
     ],
-
     // filenames
-    "filenames/match-regex": ["error", "^[a-z0-9.-]+$", false],
+    "filenames/match-regex": [
+      "error",
+      "^[a-z0-9.-]+$",
+      false
+    ],
     "filenames/match-exported": "off",
     "filenames/no-index": "error",
-
     // ts
     "@typescript-eslint/no-unused-vars": [
       "error",
-      { "argsIgnorePattern": "^_+" }
+      {
+        "argsIgnorePattern": "^_+"
+      }
     ],
     "@typescript-eslint/explicit-member-accessibility": [
       "warn",
-      { "accessibility": "no-public" }
+      {
+        "accessibility": "no-public"
+      }
     ],
     "@typescript-eslint/no-parameter-properties": "off",
-
     // import
     "import/order": [
       "error",
       {
         "newlines-between": "always"
       }
-      
     ],
     "import/newline-after-import": "warn",
     "import/no-anonymous-default-export": "warn",
     "import/no-default-export": "error",
-
     // prettier
     "prettier/prettier": [
       "error",
       {
         "trailingComma": "all",
+        "tabWidth": 4,
         "singleQuote": false,
         "semi": false,
         "arrowParens": "always"
       }
     ],
-
     // promise
     "promise/prefer-await-to-then": "error",
     "promise/prefer-await-to-callbacks": "error",
-
     // no-secrets
     "no-secrets/no-secrets": "error",
-
     // sql
     "sql/format": [
       "error",
@@ -156,10 +165,8 @@
         "allowLiteral": false
       }
     ],
-
     // regex
     "optimize-regex/optimize-regex": "warn",
-
     // unicorn
     "unicorn/prevent-abbreviations": [
       "error",

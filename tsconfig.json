@@ -1,19 +1,21 @@
 {
     "compilerOptions": {
         "baseUrl": ".",
+        "outDir": "dist",
         "allowJs": true,
+        "noEmitOnError": true,
         "alwaysStrict": true,
         "esModuleInterop": true,
+        "sourceMap": true,
         "allowSyntheticDefaultImports": true,
         "forceConsistentCasingInFileNames": true,
-        "jsx": "preserve",
         "lib": [
             "dom",
             "es2017"
         ],
         "module": "esnext",
         "moduleResolution": "node",
-        "noEmit": true,
+        "noEmit": false,
         "noFallthroughCasesInSwitch": true,
         "noUnusedLocals": false,
         "noUnusedParameters": true,
@@ -26,6 +28,7 @@
         "node_modules"
     ],
     "include": [
-        "**/*.ts", "**/*.js",
+        "**/*.ts",
+        "**/*.js",
     ]
 }
