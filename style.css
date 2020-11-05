@@ -20,12 +20,19 @@ body {
   cursor: pointer;
 }
 
+*,
+::after,
+::before {
+  box-sizing: border-box;
+}
+
 .button:active {
   transform: scale(0.95);
 }
 
 .input {
-  width: 238px;
+  width: 315px;
+  max-width: 100%;
   position: relative;
   height: 100px;
   border: 1px solid #000;
@@ -54,6 +61,12 @@ body {
   animation: enter 0.6s linear 0s infinite;
   right: 5px;
   bottom: 10px;
+}
+
+.operation {
+  position: absolute;
+  top: 40%;
+  right: 5px;
 }
 
 @keyframes enter {

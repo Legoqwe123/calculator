@@ -10,13 +10,20 @@ export enum Operation {
     "MINUS" = "minus",
     "PLUS" = "plus",
     "EQUALLY" = "equally",
+    "SQRT" = "SQRT",
+    "POW" = "POW",
 }
 
-export type OperationType =
+export type onlyArithmeticOperationType =
     | Operation.MINUS
     | Operation.MULTIPLY
     | Operation.PLUS
     | Operation.DIVIDE
+    | Operation.SQRT
+    | Operation.POW
+
+export type OperationType =
+    | onlyArithmeticOperationType
     | Operation.DEL
     | Operation.DELALL
     | Operation.EQUALLY

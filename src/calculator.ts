@@ -1,53 +1,49 @@
 /* eslint-disable security/detect-object-injection */
-import { TypeButtons, Operation, OperationType } from "./types"
+import { onlyArithmeticOperationType, Operation, OperationType } from "./types"
+import { translateOperation, transformToNumber } from "./utils"
+import { buttons } from "./constant"
 
 export class Calculator {
-    private buttons: TypeButtons = [
-        { content: "CE", operation: Operation.DELALL },
-        { content: "C", operation: Operation.DEL },
-        { content: "/", operation: Operation.DIVIDE },
-        { content: "*", operation: Operation.MULTIPLY },
-        { content: "1", operation: null },
-        { content: "2", operation: null },
-        { content: "3", operation: null },
-        { content: "-", operation: Operation.MINUS },
-        { content: "4", operation: null },
-        { content: "5", operation: null },
-        { content: "6", operation: null },
-        { content: "+", operation: Operation.PLUS },
-        { content: "7", operation: null },
-        { content: "8", operation: null },
-        { content: "9", operation: null },
-        { content: "=", operation: Operation.EQUALLY },
-        { content: "0", operation: null },
-        { content: ".", operation: null },
-    ]
+    private buttons = buttons
 
     private operationObjectFunction = {
-        [Operation.DELALL]: this.clearAll.bind(this),
-        [Operation.DEL]: this.clearAll.bind(this),
+        [Operation.DELALL]: () => (this.clearAll = ""),
+        [Operation.DEL]: () => (this.clear = ""),
         [Operation.MINUS]: this.calculate.bind(this, Operation.MINUS),
         [Operation.PLUS]: this.calculate.bind(this, Operation.PLUS),
         [Operation.EQUALLY]: this.calculate.bind(this, Operation.EQUALLY),
         [Operation.DIVIDE]: this.calculate.bind(this, Operation.DIVIDE),
         [Operation.MULTIPLY]: this.calculate.bind(this, Operation.MULTIPLY),
+        [Operation.SQRT]: this.calculate.bind(this, Operation.SQRT),
+        [Operation.POW]: this.calculate.bind(this, Operation.POW),
     }
 
     private accum = ""
     private temporary = ""
+    private sum: undefined | number | null
     private operation: OperationType | null = null
+    private $operation: HTMLDivElement | undefined
 
     constructor(
-        private container: HTMLDivElement | null,
-        private input: HTMLDivElement | null,
-        private tempoInput: HTMLDivElement | null,
+        private $container: HTMLDivElement | null,
+        private $input: HTMLDivElement | null,
+        private $tempoInput: HTMLDivElement | null,
     ) {
-        this.container?.addEventListener("click", this.handleChange.bind(this))
+        this.$container?.addEventListener("click", this.handleChange.bind(this))
     }
 
     init(): void {
-        if (this.container && this.input) {
-            this.container.innerHTML = this.buttons
+        if (this.$container && this.$input) {
+            const $div = document.createElement("div")
+            const $input = document.querySelector(".input")
+
+            $div.className = "operation"
+
+            $input?.append($div)
+
+            this.$operation = $div
+
+            this.$container.innerHTML = this.buttons
                 .map(
                     (item, idx) =>
                         `<div class = '${
@@ -64,60 +60,122 @@ export class Calculator {
         }
     }
 
-    handleChange(event: Event): void {
+    private handleChange(event: Event): void {
         const target = event.target as HTMLDivElement
 
         if (target.className !== "container") {
-            if (!target.dataset.operation) {
+            if (
+                !target.dataset.operation ||
+                (target.dataset.operation === Operation.MINUS &&
+                    !this.accum &&
+                    !this.accum.includes(Operation.MINUS))
+            ) {
                 if (target.textContent === "." && !this.accum) {
-                    this.accum += 0 + target.textContent
+                    this.accum += 0 + (target.textContent as string)
                 } else {
-                    this.accum += target.textContent as string
+                    this.accum +=
+                        target.textContent === "." && this.accum.includes(".")
+                            ? ""
+                            : (target.textContent as string)
                 }
 
-                if (this.input) {
-                    this.input.textContent = this.accum
+                if (this.$input) {
+                    this.$input.textContent = this.accum
                 }
             } else {
-                this.operationObjectFunction[
-                    target.dataset.operation as Operation.DELALL | Operation.DEL
-                ]()
+                if (
+                    isFinite(transformToNumber(this.accum) as number) ||
+                    (this.accum === "-" &&
+                        target.dataset.operation === Operation.DELALL) ||
+                    target.dataset.operation === Operation.DEL
+                ) {
+                    this.operationObjectFunction[
+                        target.dataset.operation as OperationType
+                    ]()
+                }
             }
         }
     }
 
-    clearAll(): void {
-        this.accum = ""
-        this.operation = null
-        this.temporary = ""
-
-        if (this.input && this.tempoInput) {
-            this.input.textContent = this.accum
-            this.tempoInput.textContent = this.temporary
-        }
-    }
-
-    clear(): void {
-        this.accum = ""
-
-        if (this.input) {
-            this.input.textContent = this.accum
-        }
-    }
-
-    calculate(operation: OperationType): void {
+    private calculate(operation: OperationType): void {
         if (operation !== Operation.EQUALLY && !this.operation) {
             this.temporary = this.accum
             this.operation = operation
 
-            if (this.tempoInput) {
-                this.tempoInput.textContent = this.temporary
-            }
+            if (this.$tempoInput && this.$operation) {
+                if (this.operation === Operation.SQRT) {
+                    this.calculateValue = this.operation
 
-            this.clear()
-        } else {
-            if (this.operation && this.temporary) {
+                    return
+                }
+
+                this.$operation.innerHTML = this.temporary
+                    ? (translateOperation(this.operation) as string)
+                    : ""
+                this.$tempoInput.textContent = this.temporary
+
+                this.clear = ""
             }
+        } else {
+            if (this.operation && this.temporary && this.accum) {
+                this.calculateValue = this
+                    .operation as onlyArithmeticOperationType
+            }
+        }
+    }
+
+    private set calculateValue(value: onlyArithmeticOperationType) {
+        const calculateObjectFunction = {
+            [Operation.MINUS]:
+                (transformToNumber(this.temporary) as number) -
+                (transformToNumber(this.accum) as number),
+            [Operation.PLUS]:
+                (transformToNumber(this.temporary) as number) +
+                (transformToNumber(this.accum) as number),
+            [Operation.DIVIDE]:
+                (transformToNumber(this.temporary) as number) /
+                (transformToNumber(this.accum) as number),
+            [Operation.MULTIPLY]:
+                (transformToNumber(this.temporary) as number) *
+                (transformToNumber(this.accum) as number),
+            [Operation.SQRT]: Math.sqrt(
+                transformToNumber(this.accum) as number,
+            ),
+            [Operation.POW]:
+                (transformToNumber(this.temporary) as number) **
+                (transformToNumber(this.accum) as number),
+        }
+
+        const sum = calculateObjectFunction[value]
+
+        this.clearAll = ""
+
+        this.sum = sum
+
+        this.accum = this.sum + ""
+
+        if (this.$input) {
+            this.$input.textContent = this.accum
+        }
+    }
+
+    private set clearAll(value: string) {
+        this.accum = value
+        this.operation = null
+        this.temporary = value
+
+        if (this.$input && this.$tempoInput && this.$operation) {
+            this.$input.textContent = this.accum
+            this.$tempoInput.textContent = this.temporary
+            this.$operation.textContent = value
+        }
+    }
+
+    private set clear(value: string) {
+        this.accum = value
+
+        if (this.$input) {
+            this.$input.textContent = this.accum
         }
     }
 }

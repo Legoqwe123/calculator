@@ -19,7 +19,7 @@ const server = new DevServer(compiler, {
   after: (app) => {
     app.use(
       hot(compiler, {
-        log: hot.logger,
+        log: false,
       })
     )
   },
