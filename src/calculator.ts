@@ -79,7 +79,7 @@ export class Calculator {
 
                 this.$input.innerHTML = this.accum
                     .split("")
-                    .map((item) => `<span>${item}</span>`)
+                    .map((item) => `<span class = "input-text">${item}</span>`)
                     .join("")
             } else {
                 if (
