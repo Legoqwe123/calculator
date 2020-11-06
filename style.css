@@ -26,6 +26,8 @@ body {
   cursor: pointer;
   box-shadow: 1px 0px 1px 0px black;
   color: #fff;
+  font-size: 18px;
+  font-weight: bold;
 }
 
 .button:active {

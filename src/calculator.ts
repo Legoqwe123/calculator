@@ -1,6 +1,11 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion, security/detect-object-injection */
 import { onlyArithmeticOperationType, Operation, OperationType } from "./types"
-import { translateOperation, transformToNumber } from "./utils"
+import {
+    translateOperation,
+    transformToNumber,
+    transformToDecimalNumber,
+    checkIsIntegerNumber,
+} from "./utils"
 import { buttons } from "./constant"
 
 export class Calculator {
@@ -119,20 +124,52 @@ export class Calculator {
         }
     }
 
+    private transformValueForCalculate(accum: string, temporary: string) {
+        const isDecimal =
+            !checkIsIntegerNumber(accum) || !checkIsIntegerNumber(temporary)
+
+        if (isDecimal) {
+            const transformTemporary = transformToDecimalNumber(temporary)
+            const transformAccum = transformToDecimalNumber(accum)
+            const maxLengthAfterDot = Math.max(
+                ...[
+                    transformAccum.lengthAfterDot,
+                    transformTemporary.lengthAfterDot,
+                ],
+            )
+
+            const multiplier = 10 ** maxLengthAfterDot
+
+            return {
+                temporary: transformTemporary.number * multiplier,
+                accum: transformAccum.number * multiplier,
+                divider: multiplier,
+            }
+        } else {
+            return {
+                temporary: transformToNumber(temporary) as number,
+                accum: transformToNumber(accum) as number,
+            }
+        }
+    }
+
     private set calculateValue(value: onlyArithmeticOperationType) {
+        const { temporary, divider, accum } = this.transformValueForCalculate(
+            this.accum,
+            this.temporary,
+        )
+
         const calculateObjectFunction = {
-            [Operation.MINUS]:
-                (transformToNumber(this.temporary) as number) -
-                (transformToNumber(this.accum) as number),
-            [Operation.PLUS]:
-                (transformToNumber(this.temporary) as number) +
-                (transformToNumber(this.accum) as number),
-            [Operation.DIVIDE]:
-                (transformToNumber(this.temporary) as number) /
-                (transformToNumber(this.accum) as number),
-            [Operation.MULTIPLY]:
-                (transformToNumber(this.temporary) as number) *
-                (transformToNumber(this.accum) as number),
+            [Operation.MINUS]: divider
+                ? (temporary - accum) / divider
+                : temporary - accum,
+            [Operation.PLUS]: divider
+                ? (temporary + accum) / divider
+                : temporary + accum,
+            [Operation.DIVIDE]: temporary / accum,
+            [Operation.MULTIPLY]: divider
+                ? (temporary * accum) / divider ** 2
+                : temporary * accum,
             [Operation.SQRT]: Math.sqrt(
                 transformToNumber(this.accum) as number,
             ),

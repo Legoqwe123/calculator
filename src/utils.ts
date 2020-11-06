@@ -1,4 +1,4 @@
-import { Operation, OperationType } from "./types"
+import { Operation, OperationType, DecilmalTypeObject } from "./types"
 
 export const translateOperation = (
     operation: OperationType,
@@ -19,10 +19,30 @@ export const translateOperation = (
     }
 }
 
-export const transformToNumber = (value: string): number | Error => {
+export const transformToNumber = (
+    value: string,
+):
+    | number
+    | Error
+    | {
+          number: number
+      } => {
     if (+value !== NaN) {
         return +value
     }
 
     throw new Error("This argument is not a number")
+}
+
+export const checkIsIntegerNumber = (value: string): boolean =>
+    ((transformToNumber(value) as number) ^ 0) === transformToNumber(value)
+
+export const transformToDecimalNumber = (value: string): DecilmalTypeObject => {
+    const lengthAfterDot = value.slice(value.indexOf("."), value.length - 1)
+        .length
+
+    return {
+        number: transformToNumber(value) as number,
+        lengthAfterDot,
+    }
 }

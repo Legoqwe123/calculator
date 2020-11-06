@@ -27,3 +27,5 @@ export type OperationType =
     | Operation.DEL
     | Operation.DELALL
     | Operation.EQUALLY
+
+export type DecilmalTypeObject = { number: number; lengthAfterDot: number }
