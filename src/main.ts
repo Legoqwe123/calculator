@@ -21,13 +21,16 @@ document.addEventListener("DOMContentLoaded", (): void => {
 
         const rectText = buttons.map((item) => item.content)
 
-        background.style.gridTemplateRows = `200px `.repeat(height / 200)
+        background.style.gridTemplateRows = `195,8px `.repeat(
+            Math.round(height / 200),
+        )
+
         background.style.gridTemplateColumns = `205.8px `.repeat(
             Math.round(width / 200),
         )
 
         background.innerHTML = new Array(
-            Math.floor((height / 200) * (width / 200)),
+            Math.round(height / 200) * Math.round(width / 200),
         )
             .fill("")
             .map(
