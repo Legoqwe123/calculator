@@ -1,7 +1,14 @@
 {
+  "name": "calculator",
+  "version": "1.0.0",
+  "main": "index.js",
   "scripts": {
-    "start:dev": "cross-env-shell MODE=development  node webpack/start.js"
-  },
+    "start:dev": "cross-env-shell MODE=development node  \"./webpack/start.js\"",
+    "build": "cross-env-shell MODE=production node \"./webpack/build.js\"",
+    "deploy": "yarn build && gh-pages -d dist"
+    },
+  "repository": "git@github.com:Legoqwe123/calculator.git",
+  "author": "Legoqwe123 prturkamalov@yandex.ru",
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^4.6.0",
     "@typescript-eslint/parser": "^4.6.0",
@@ -25,6 +32,7 @@
     "friendly-errors-webpack-plugin": "^1.7.0",
     "gh-pages": "^3.1.0",
     "html-webpack-plugin": "^4.5.0",
+    "mini-css-extract-plugin": "^1.2.1",
     "prettier": "^2.1.2",
     "style-loader": "^2.0.0",
     "ts-loader": "^8.0.7",

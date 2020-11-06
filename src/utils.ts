@@ -24,5 +24,5 @@ export const transformToNumber = (value: string): number | Error => {
         return +value
     }
 
-    throw new Error("This is argument is not a number")
+    throw new Error("This argument is not a number")
 }
